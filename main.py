@@ -66,7 +66,7 @@ layout = [
     [sg.Input(), sg.FolderBrowse('FolderBrowse')],
     [sg.Text(key='-TXT-', text_color="Red")],
     [sg.Text('Password', size =(15, 1)), sg.Input("", key='-OUTPUT-'),sg.Button('Generate Password')],
-    [sg.Checkbox('Delete File/Folder after Encryption', default=False, key="chk") ],
+    [sg.Checkbox('Delete File/Folder after Encryption/Decryption', default=False, key="chk") ],
     [sg.Text(key='-TEXT-', text_color="Red")],
     [sg.Text(key='SUCCEESS', text_color="Green")],
     [sg.Button('Encrypt'),sg.Button('Decrypt') , sg.Cancel()],
@@ -127,16 +127,17 @@ while True:
             locn = values['FileBrowse']
             start_time = time.time()
             decrypt_file(passwd.encode("utf8"), in_filename=str(locn), out_filename=str(locn)[0:-4],chunksize=bufferSize)
-            os.remove(locn)
+            if  values["chk"]:
+                os.remove(locn)
             if str(locn).endswith(".zip.aes"):  
                 nlocn=str(locn)[0:-4]
                 with zipfile.ZipFile(nlocn, 'r') as zip_ref:
                     zip_ref.extractall(nlocn[0:-4])
                     window['SUCCEESS'].update("Folder decrypted successfully")
-                os.remove(nlocn)
+                if  values["chk"]:
+                    os.remove(nlocn)
             else:
                 window['SUCCEESS'].update("File decrypted successfully")
             print(time.time() - start_time, "seconds")
             
-
 window.close()
